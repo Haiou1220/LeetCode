@@ -1,0 +1,71 @@
+
+
+/*给你一个整数 x ，如果 x 是一个回文整数，返回 true ；否则，返回 false 。
+回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+例如，121 是回文，而 123 不是。*/
+/*bool isPalindrome(int x){
+}*/
+
+#include <stdio.h>
+#include <stdlib.h> //itoa() malloc()
+#include <math.h>   //pow()
+#include <stdbool.h>
+bool isPalindrome(long x);
+
+int main(void)
+{
+    long int_input = 1234554321;
+    bool is_hunwen = 0;
+
+   is_hunwen =  isPalindrome(int_input);
+
+
+    printf("int_input:%ld\r\n", int_input);
+    printf("is_hunwen:%d\r\n", is_hunwen);    //
+}
+
+bool isPalindrome(long x){
+  
+    long int_input = x;
+    long temp;
+    int positive_dec_width = 0; // 初始化
+    long huiwen_num = 0;
+    int int_get_bit;
+    bool is_hunwen = 0;
+
+    if (int_input > 0) // 计算回文数条件 //大于零
+    {
+
+        for (long i = int_input; i; i = i / 10)
+        {
+            positive_dec_width++;
+        } // 计算正整数10进制的宽度
+
+        temp = int_input;
+        for (int i = 0; i < positive_dec_width; i++)
+        {
+            int_get_bit = (temp / (int)pow(10, (positive_dec_width - 1) - i));
+            temp = temp % (long)pow(10, (positive_dec_width - 1) - i);
+            huiwen_num = huiwen_num + (int_get_bit) * (long)pow(10, i);
+        } // 计算回文数
+
+        if (huiwen_num == int_input)
+        {
+            is_hunwen = true;
+        }
+        else
+        {
+            is_hunwen = false;
+        }
+    }
+    if (int_input == 0) //  回文数零
+    {
+       is_hunwen = true;
+    }
+  
+   //printf("positive_dec_width:%d\r\n", positive_dec_width);
+ //  printf("huiwen_num:%ld\r\n", huiwen_num); //
+  
+   return is_hunwen;
+
+}
