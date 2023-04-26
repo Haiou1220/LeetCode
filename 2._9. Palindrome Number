@@ -1,0 +1,55 @@
+ 
+ /*给你一个整数 x ，如果 x 是一个回文整数，返回 true ；否则，返回 false 。
+回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+例如，121 是回文，而 123 不是。*/
+ /*bool isPalindrome(int x){
+}*/
+
+#include<stdio.h>
+ #include<stdlib.h>//itoa() malloc()
+ #include<math.h>//pow()
+ #include<stdbool.h>
+ //#include<string.h>
+int main()
+{
+int int_input =1234;
+
+int temp1;
+int positive_dec_width = 0;//初始化
+int huiwen_num = 0;
+bool is_hunwen;
+char* mallo_int_string = NULL ;
+temp1 =int_input;
+if(int_input>0)//计算回文数条件 //大于零
+{
+       do
+       {
+        temp1 = temp1/10;
+        positive_dec_width++;
+       }while (temp1); //计算正整数10进制的宽度
+
+      mallo_int_string = ( char* )malloc((positive_dec_width+1)*sizeof(char));//字符串结束符所以加1//申请动态空间
+
+         itoa(int_input,mallo_int_string,10);//整型转字符串//第三个参数10:10进制
+       
+
+       for(int i;i<positive_dec_width;i++){
+       huiwen_num = huiwen_num +  (mallo_int_string[i]-'0')*(int)pow(10,i);
+       }//计算回文数
+      
+      if(huiwen_num == int_input){is_hunwen = true; }
+
+}else{
+       is_hunwen = false;
+}
+
+printf("int_input:%d\r\n",int_input);
+printf("positive_dec_width:%d\r\n",positive_dec_width);
+printf("mallo_IntToString:%s\r\n", mallo_int_string );//
+printf("huiwen_num:%d\r\n", huiwen_num);//
+ printf("is_hunwen:%d\r\n", is_hunwen );//
+
+free(mallo_int_string);
+
+
+}
