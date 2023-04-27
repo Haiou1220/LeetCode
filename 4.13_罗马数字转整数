@@ -1,0 +1,181 @@
+//罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
+ // 右加左減：
+//在較大的羅馬數字的右邊記上較小的羅馬數字，表示大數字加小數字。
+//在較大的羅馬數字的左邊記上較小的羅馬數字，表示大數字减小數字。
+//左减的数字有限制，仅限于I、X、C。比如45不可以写成VL，只能是XLV
+//但是，左減時不可跨越一個位值。比如，99不可以用IC（100-1）表示，而是用XCIX（[100-10]+[10-1]）表示。（等同於阿拉伯數字每位數字分別表示。）
+//左減數字必須為一位，比如8寫成VIII，而非IIX。
+//右加數字不可連續超過三位，比如14寫成XIV，而非XIIII。（見下方“數碼限制”一項。）
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+void RomanStrToIntArry(char *char_str, int *mallo_int_arry); // 方法  罗马数字字符数组 转 整型数组
+int RomanStrToInt(char *s);
+int RomanIntArry_To_Int(int *int_arry, int len);
+int get_RomanIntArry_maxIndex(int *RomanIntArry, int len); // 方法  找出最大的罗马数字下标
+int get_romanIntArry_sum(int *int_arry, int len); //递归 最大数为 拆分两部分依据   前减 后加
+
+int main(int argc, char *argv[])
+{
+    char *romanNumStr = NULL;
+
+    // 如果有程序参数//argc= 2 , argv[1]
+    if (argc > 1)
+    {
+        printf("#input roman num is:%s\r\n", argv[argc - 1]); //
+        romanNumStr = argv[argc - 1];
+
+        printf("#romanNumStr Lenght:%d\r\n", (int)strlen(romanNumStr)); //
+    }else{
+        romanNumStr = "MCMXCIV";
+    }
+   // RomanStrToInt(romanNumStr);
+    printf("main_print_romanToInt:%d\r\n", RomanStrToInt(romanNumStr));
+
+    return 0;
+}
+
+int RomanStrToInt(char *s)
+{
+    int int_romanInt = 0;
+    int int_arry_len = (int)strlen(s);
+    int *mallo_int_arry;
+    
+    mallo_int_arry = malloc(int_arry_len * sizeof(int));
+    RomanStrToIntArry(s, mallo_int_arry); // 方法 第一步  罗马数字字符数组 转 整型数组 //数据处理
+
+    int_romanInt = RomanIntArry_To_Int(mallo_int_arry, int_arry_len); // 整型数组 计算
+
+    free(mallo_int_arry);
+    return int_romanInt;
+}
+
+int RomanIntArry_To_Int(int *int_arry, int len) // now
+{
+    int RomanInt = 0;
+
+    RomanInt = get_romanIntArry_sum(int_arry, len);
+    
+    printf("RomanInt:%d\r\n",RomanInt);
+
+    return RomanInt;
+}
+
+int get_romanIntArry_sum(int *int_arry, int len) // 递归
+{
+    /*
+       方法 第三步  左减  右加 递归 //M   C   M  XCIV" =1994  //X IX是19  // C 100 //C  XCIX 199
+       判断max_num_index 前是否有内容
+       判断 max_num_index 后面是否有内容*/
+    /*罗马数字共有7個，即I（1）、V（5）、X（10）、L（50）、C（100）、D（500）和M（1000）。
+     * "M      C     M              XCIV"
+     * 1000  +  （ C     M              XCIV） =1000+x
+     * C     M              XCIV   = 1000-100 +x
+     * X   C     IV   =   100 -10 + x
+     * I  V  =  5 -1 = 4
+     *  4+90+900+1000=1994 */
+   
+    int max_index = 0;
+    int sum = 0;
+    int right_have = 0;
+    int left_have = 0;
+    
+    printf("-----get_romanIntArry_sum: len:%d\r\n",len);
+
+    if (len == 1)
+    {
+        sum = *int_arry;
+       printf("########len1,num;%d\r\n",sum);
+    }
+    else
+    {
+        max_index = get_RomanIntArry_maxIndex(int_arry, len); //  找出   最大的罗马数字下标
+          sum = int_arry[max_index]; //找出 最大数
+          printf("########max_index:%d ,num:%d\r\n",max_index,sum);
+
+        if (max_index != 0) //不等于第一个
+        {
+            left_have = 1;
+        }
+        else
+        {
+            left_have = 0;
+        }
+        if ((max_index!=(len-1) ))//不等于最后一个  AOA  //OAA  //AAO
+        {
+            right_have = 1;
+        }
+        else
+        {
+            right_have = 0;
+        }
+
+        if (right_have)
+        { // 后有内容
+            printf("----------------------------right_have\r\n");
+            sum = sum + get_romanIntArry_sum(int_arry + max_index +1, len - (max_index + 1));
+            
+        }
+        if (left_have)
+        { // 前有内容
+            printf("----------------------------left_have\r\n");
+           sum = sum  - get_romanIntArry_sum(int_arry , (max_index) );           
+        }
+    }
+
+    return sum;
+}
+
+int get_RomanIntArry_maxIndex(int *RomanIntArry, int len) // 方法  找出最大的罗马数字下标
+{
+    int index = 0;
+    if (len)
+    {
+        for (int i = 0; i < len; i++)
+        {
+            if (RomanIntArry[i] > RomanIntArry[index]) // XIX是19  是X+(IX) =  X+(X-I) 递归 左加 右减 // MM  是2000
+            {
+                index = i;
+            }
+        }
+    }
+    return index;
+}
+
+void RomanStrToIntArry(char *char_str, int *mallo_int_arry) // 方法  罗马数字字符数组 转 整型数组
+{
+    int char_str_len = strlen(char_str);
+    int temp;
+    for (int i = 0; i < char_str_len; i++)
+    {
+        switch (char_str[i]) // I（1）、V（5）、X（10）、L（50）、C（100）、D（500）和M（1000）
+        {
+        case 'I':
+            temp = 1;
+            break;
+        case 'V':
+            temp = 5;
+            break;
+        case 'X':
+            temp = 10;
+            break;
+        case 'L':
+            temp = 50;
+            break;
+        case 'C':
+            temp = 100;
+            break;
+        case 'D':
+            temp = 500;
+            break;
+        case 'M':
+            temp = 1000;
+            break;
+        default:
+            temp = 0;
+            break;
+        }
+        mallo_int_arry[i] = temp;
+    }
+}
